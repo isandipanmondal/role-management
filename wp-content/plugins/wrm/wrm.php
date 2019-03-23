@@ -28,7 +28,6 @@ if( ! class_exists('WRM') ) :
          */
         function __construct()
         {
-            add_action( 'admin_notices', array($this, 'active'));
 
             /*
              *
@@ -78,17 +77,22 @@ if( ! class_exists('WRM') ) :
                 } else {
 
                     //echo "The table name is exists!";
-                    ?>
-                    <div class="notice notice-error is-dismissible">
-                        <p><?php _e( 'WRM table already exists!'); ?></p>
-                    </div>
-                    <?php
+                    //$this->activation_notice();
+                    add_action( 'admin_notices', array($this, 'activation_notice'));
 
                 }
 
             } catch (Exception $e) {
                 $this->wrmErrorHandle($e);
             }
+        }
+
+        function activation_notice(){
+            ?>
+            <div class="notice notice-error is-dismissible">
+                <p><?php _e( 'WRM table already exists!'); ?></p>
+            </div>
+            <?php
         }
 
         /**
@@ -161,11 +165,11 @@ if( ! class_exists('WRM') ) :
         function wpdocs_register_my_custom_menu_page(){
             add_menu_page(
                 __( 'Custom Menu Title', 'textdomain' ),
-                'custom menu',
+                'WRM',
                 'manage_options',
-                'custompage',
-                'my_custom_menu_page',
-                plugins_url( 'myplugin/images/icon.png' ),
+                'wrm',
+                array($this,'wrm_menu_page'),
+                'dashicons-groups',
                 6
             );
         }
@@ -174,8 +178,8 @@ if( ! class_exists('WRM') ) :
         /**
          * Display a custom menu page
          */
-        function my_custom_menu_page(){
-            esc_html_e( 'Admin Page Test', 'textdomain' );
+        function wrm_menu_page(){
+            echo "Hello world";
         }
 
 
@@ -187,8 +191,6 @@ if( ! class_exists('WRM') ) :
         function active()
         {
             $this->createWRMTable();
-            $this->wpdocs_register_my_custom_menu_page();
-
             flush_rewrite_rules();
         }
 
